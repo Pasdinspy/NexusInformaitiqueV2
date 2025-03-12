@@ -1,0 +1,23 @@
+# dépendances
+/node_modules
+
+# fichiers d'environnement
+.env
+.env.local
+.env.*.local
+
+# dossier de build
+/dist
+
+# fichiers système
+.DS_Store
+.thumbs.db
+
+# dossiers d'éditeur
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
