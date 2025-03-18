@@ -1,18 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
+import FicheFraisView from '../views/FicheFraisView.vue'
 
 const routes = [
   {
     path: '/',
+    redirect: '/login'
+  },
+  {
+    path: '/login',
     name: 'login',
     component: LoginView
   },
   {
     path: '/fiche-frais',
-    name: 'ficheFrais',
-    // Utilisation du chargement paresseux (lazy loading)
-    component: () => import('../views/FicheFraisView.vue'),
-    meta: { requiresAuth: true }
+    name: 'fiche-frais',
+    component: FicheFraisView,
+    meta: { requiresAuth: true },
+    props: route => ({ 
+      role: route.query.role,
+      VIS_ID: route.query.VIS_ID 
+    })
   }
 ]
 
@@ -21,13 +29,18 @@ const router = createRouter({
   routes
 })
 
-// Navigation guard
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const isAuthenticated = localStorage.getItem('token')
+  console.log('Navigation guard - destination:', to.path)
+  const store = router.app.$store
 
-  if (requiresAuth && !isAuthenticated) {
-    next('/')
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store?.state?.auth?.utilisateur) {
+      console.log('Redirection vers login - utilisateur non authentifié')
+      next('/login')
+    } else {
+      console.log('Utilisateur authentifié - autorisation accordée')
+      next()
+    }
   } else {
     next()
   }

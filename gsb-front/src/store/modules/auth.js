@@ -1,4 +1,4 @@
-import { serviceAuth } from '@/services/api';
+import { serviceAuth } from '@/services/api'
 
 export default {
   namespaced: true,
@@ -9,38 +9,37 @@ export default {
   },
   mutations: {
     DEFINIR_UTILISATEUR(state, utilisateur) {
-      console.log('Mutation DEFINIR_UTILISATEUR:', utilisateur);
-      state.utilisateur = utilisateur;
+      console.log('Mutation DEFINIR_UTILISATEUR:', utilisateur)
+      state.utilisateur = utilisateur
     },
     DEFINIR_CHARGEMENT(state, chargement) {
-      state.chargement = chargement;
+      state.chargement = chargement
     },
     DEFINIR_ERREUR(state, erreur) {
-      state.erreur = erreur;
+      state.erreur = erreur
     }
   },
   actions: {
     async connexion({ commit }, identifiants) {
-      console.log('Action connexion démarrée');
-      commit('DEFINIR_CHARGEMENT', true);
-      commit('DEFINIR_ERREUR', null);
+      console.log('Action connexion démarrée')
       try {
-        const reponse = await serviceAuth.connexion(identifiants);
-        console.log('Réponse du serveur dans action:', reponse);
+        const reponse = await serviceAuth.connexion(identifiants)
+        console.log('Réponse du serveur:', reponse)
         
         if (!reponse.succes) {
-          throw new Error(reponse.message || 'Échec de la connexion');
+          throw new Error(reponse.message || 'Échec de la connexion')
         }
         
-        commit('DEFINIR_UTILISATEUR', reponse.donnees);
-        return reponse.donnees;
+        commit('DEFINIR_UTILISATEUR', reponse.donnees)
+        return reponse.donnees
       } catch (erreur) {
-        console.error('Erreur dans action connexion:', erreur);
-        commit('DEFINIR_ERREUR', erreur.message);
-        throw erreur;
-      } finally {
-        commit('DEFINIR_CHARGEMENT', false);
+        console.error('Erreur dans action connexion:', erreur)
+        throw erreur
       }
     }
+  },
+  getters: {
+    estAuthentifie: state => !!state.utilisateur,
+    roleUtilisateur: state => state.utilisateur?.role
   }
-};
+}
